@@ -1,15 +1,26 @@
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import { useState } from 'react';
+import useEnrollment from '../../../hooks/api/useEnrollment';
 
 export default function Payment() {
   const [clicked, setClicked] = useState(false);
+  const { enrollment } = useEnrollment();
+
+  if (!enrollment) {
+    return (
+      <>
+        <StyledTypography variant="h4">Ingresso e Pagamento</StyledTypography>
+        <ContainerWarning>
+          <h5>Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso</h5>
+        </ContainerWarning>
+      </>
+    );
+  }
+
   return (
     <>
-      <StyledTypography variant="h4">Ingresso e Pagamento</StyledTypography>
-      {/* <ContainerWarning>
-        <h5>Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso</h5>
-      </ContainerWarning> */}
+      <StyledTypography variant="h4">Ingresso e Pagamento</StyledTypography>  
       <ContainerTicket>
         <h5>Primeiro, escolha sua modalidade de ingresso</h5>
         <Modalidade>
@@ -31,20 +42,20 @@ const StyledTypography = styled(Typography)`
   margin-bottom: 20px!important;
 `;
 
-// const ContainerWarning = styled.div`
-//   width: 100%;
-//   height: 70vh;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   h5{
-//     text-align: center;
-//     width: 30rem;
-//     height: 2.5rem;
-//     font-size: 20px;
-//     color: #8E8E8E;
-//   }
-// `; 
+const ContainerWarning = styled.div`
+  width: 100%;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  h5{
+    text-align: center;
+    width: 30rem;
+    height: 2.5rem;
+    font-size: 20px;
+    color: #8E8E8E;
+  }
+`; 
 
 const ContainerTicket = styled.div`
   width: 50%;
@@ -64,7 +75,7 @@ const Button = styled.button`
   margin-right: 1rem;
   border: 1px solid #CECECE;
   border-radius: 20px;
-  /* background-color: ${(prop) => prop.clicked? 'transparent' : '#FFEED2'}; */
+  /* background-color: ${(prop) => prop.clicked ? 'transparent' : '#FFEED2'}; */
   cursor: pointer;
   font-size: 16px;
 
