@@ -5,6 +5,7 @@ import useEnrollment from '../../../hooks/api/useEnrollment';
 import instance from '../../../services/api';
 import useToken from '../../../hooks/useToken';
 import { useNavigate } from 'react-router-dom';
+import PaymentForm from './PaymentForm';
 
 export default function Payment() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function Payment() {
   const [ticketTypes, setTicketTypes] = useState({});
   const [selectedModality, setSelectedModality] = useState('');
   const [haveHotel, setHaveHotel] = useState(undefined);
+  const [reserved, setReserved] = useState(false);
 
   useEffect(async() => {
     try {
@@ -40,7 +42,7 @@ export default function Payment() {
   }
 
   const goToPayment = () => {
-
+    setReserved(true);
   };
   if (!enrollment) {
     return (
@@ -56,79 +58,91 @@ export default function Payment() {
   return (
     <>
       <StyledTypography variant="h4">Ingresso e Pagamento</StyledTypography>
-      <ContainerTicket>
-        <h5>Primeiro, escolha sua modalidade de ingresso</h5>
-        {ticketTypes === {} ? (
-          <span>Loading</span>
-        ) : (
-          <Modalidade>
-            <Button
-              onClick={() => (selectedModality === 'presencial' ? resetButtons() : setSelectedModality('presencial'))}
-              isSelected={selectedModality === 'presencial'}
-            >
-              Presencial
-              <p>R$ {ticketTypes?.notIncludesHotel?.price}</p>
-            </Button>
-            <Button
-              onClick={() => (selectedModality === 'online' ? resetButtons() : setSelectedModality('online'))}
-              isSelected={selectedModality === 'online'}
-            >
-              Online
-              <p>R$ {ticketTypes?.isRemote?.price}</p>
-            </Button>
-          </Modalidade>
-        )}
-        {selectedModality === 'online' ? (
-          <>
-            <h5>
-              Fechado! O total ficou em <Bold> R$ 100</Bold>. Agora é so confirmar
-            </h5>
-
-            <Reserve onClick={goToPayment}>RESERVAR INGRESSO</Reserve>
-          </>
-        ) : (
-          ''
-        )}
-      </ContainerTicket>
-
-      {selectedModality === 'presencial' ? (
+      {reserved ? (
         <ContainerTicket>
-          <h5>Ótimo! Agora escolha sua modalidade de hospedagem</h5>
-          <Modalidade>
-            <Button onClick={() => setHaveHotel(false)} isSelected={haveHotel === false}>
-              Sem Hotel
-              <p>+ R$ 0</p>
-            </Button>
-            <Button onClick={() => setHaveHotel(true)} isSelected={haveHotel}>
-              Com Hotel
-              <p>+ R$ {ticketTypes?.includesHotel?.price - ticketTypes?.notIncludesHotel?.price}</p>
-            </Button>
-          </Modalidade>
-          {haveHotel === true ? (
-            <>
-              <h5>
-                Fechado! O total ficou em <Bold>R$ {ticketTypes?.includesHotel?.price}</Bold>. Agora é so confirmar
-              </h5>
-
-              <Reserve onClick={goToPayment}>RESERVAR INGRESSO</Reserve>
-            </>
-          ) : (
-            ''
-          )}
-          {haveHotel === false ? (
-            <>
-              <h5>
-                Fechado! O total ficou em <Bold>R$ {ticketTypes?.notIncludesHotel?.price}</Bold>. Agora é so confirmar
-              </h5>
-
-              <Reserve onClick={goToPayment}>RESERVAR INGRESSO</Reserve>
-            </>
-          ) : (
-            ''
-          )}
+          {selectedModality} + {haveHotel ? <>Com Hotel</> : <>Sem Hotel</>}
+          <PaymentForm/>
         </ContainerTicket>
       ) : (
-        ''
+        <>
+          <ContainerTicket>
+            <h5>Primeiro, escolha sua modalidade de ingresso</h5>
+            {ticketTypes === {} ? (
+              <span>Loading</span>
+            ) : (
+              <Modalidade>
+                <Button
+                  onClick={() =>
+                    selectedModality === 'Presencial' ? resetButtons() : setSelectedModality('Presencial')
+                  }
+                  isSelected={selectedModality === 'Presencial'}
+                >
+                  Presencial
+                  <p>R$ {ticketTypes?.notIncludesHotel?.price}</p>
+                </Button>
+                <Button
+                  onClick={() => (selectedModality === 'Online' ? resetButtons() : setSelectedModality('Online'))}
+                  isSelected={selectedModality === 'Online'}
+                >
+                  Online
+                  <p>R$ {ticketTypes?.isRemote?.price}</p>
+                </Button>
+              </Modalidade>
+            )}
+            {selectedModality === 'Online' ? (
+              <>
+                <h5>
+                  Fechado! O total ficou em <Bold> R$ 100</Bold>. Agora é so confirmar
+                </h5>
+
+                <Reserve onClick={goToPayment}>RESERVAR INGRESSO</Reserve>
+              </>
+            ) : (
+              ''
+            )}
+          </ContainerTicket>
+
+          {selectedModality === 'Presencial' ? (
+            <ContainerTicket>
+              <h5>Ótimo! Agora escolha sua modalidade de hospedagem</h5>
+              <Modalidade>
+                <Button onClick={() => setHaveHotel(false)} isSelected={haveHotel === false}>
+                  Sem Hotel
+                  <p>+ R$ 0</p>
+                </Button>
+                <Button onClick={() => setHaveHotel(true)} isSelected={haveHotel}>
+                  Com Hotel
+                  <p>+ R$ {ticketTypes?.includesHotel?.price - ticketTypes?.notIncludesHotel?.price}</p>
+                </Button>
+              </Modalidade>
+              {haveHotel === true ? (
+                <>
+                  <h5>
+                    Fechado! O total ficou em <Bold>R$ {ticketTypes?.includesHotel?.price}</Bold>. Agora é so confirmar
+                  </h5>
+
+                  <Reserve onClick={goToPayment}>RESERVAR INGRESSO</Reserve>
+                </>
+              ) : (
+                ''
+              )}
+              {haveHotel === false ? (
+                <>
+                  <h5>
+                    Fechado! O total ficou em <Bold>R$ {ticketTypes?.notIncludesHotel?.price}</Bold>. Agora é so
+                    confirmar
+                  </h5>
+
+                  <Reserve onClick={goToPayment}>RESERVAR INGRESSO</Reserve>
+                </>
+              ) : (
+                ''
+              )}
+            </ContainerTicket>
+          ) : (
+            ''
+          )}
+        </>
       )}
     </>
   );
