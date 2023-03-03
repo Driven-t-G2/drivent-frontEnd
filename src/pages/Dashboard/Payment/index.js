@@ -15,7 +15,6 @@ export default function Payment() {
   const [ticketTypes, setTicketTypes] = useState({});
   const [selectedModality, setSelectedModality] = useState('');
   const [haveHotel, setHaveHotel] = useState(undefined);
-  console.log(ticketTypes);
 
   useEffect(async() => {
     try {
