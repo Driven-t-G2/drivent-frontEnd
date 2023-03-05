@@ -134,7 +134,6 @@ export default function Payment() {
               <span>Loading</span>
             ) : (
               <Modalidade>
-                {ticketTypeId}
                 <Button
                   onClick={() =>
                     selectedModality === 'Presencial' ? resetButtons() : setSelectedModality('Presencial')
@@ -181,9 +180,9 @@ export default function Payment() {
               </Modalidade>
               {haveHotel === true ? (
                 <>
-                  <h5>
+                  <SummaryText>
                     Fechado! O total ficou em <Bold>R$ {totalPrice}</Bold>. Agora é so confirmar
-                  </h5>
+                  </SummaryText>
 
                   <Reserve onClick={goToPayment}>RESERVAR INGRESSO</Reserve>
                 </>
@@ -192,9 +191,9 @@ export default function Payment() {
               )}
               {haveHotel === false ? (
                 <>
-                  <h5>
+                  <SummaryText>
                     Fechado! O total ficou em <Bold>R$ {totalPrice}</Bold>. Agora é so confirmar
-                  </h5>
+                  </SummaryText>
 
                   <Reserve onClick={goToPayment}>RESERVAR INGRESSO</Reserve>
                 </>
@@ -242,7 +241,7 @@ const Modalidade = styled.div`
   display: flex;
   color: #8e8e8e;
 
-  padding-bottom: 33px;
+  padding-bottom: 15px;
 `;
 const Button = styled.button`
   background-color: ${({ isSelected }) => (isSelected ? '#FFEED2' : '#FFF')};
@@ -275,6 +274,8 @@ export const Reserve = styled.button`
   border-radius: 10px;
   background-color: lightgray;
 
+  margin-top: 12px;
+
   width: 170px;
   height: 40px;
 
@@ -285,6 +286,9 @@ export const Reserve = styled.button`
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
 `;
 
+const SummaryText = styled.h5`
+margin-top: 15px;
+`;
 const TicketBox = styled.div`
   margin: 15px 0;
   display: flex;
