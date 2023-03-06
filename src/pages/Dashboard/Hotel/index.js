@@ -4,8 +4,11 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import useHotel from '../../../hooks/api/useHotel';
 import HotelButton from './HotelButton';
+import { useState } from 'react';
 
 export default function Hotel() {
+  const [hotelId, setHotelId] = useState(0);
+  const [hotelSelect, setSelectHotel] = useState(false);
   const { enrollment } = useEnrollment();
   const { ticket } = useTicket();
   const { hotels } = useHotel();
@@ -59,7 +62,7 @@ export default function Hotel() {
       </ContainerTicket>
       <Modalidade>
         {hotels?.map((item) => (
-          <HotelButton hotel={item} />
+          <HotelButton hotel={item} set={setHotelId} id={hotelId} setHotel={setSelectHotel} hotelSelect={hotelSelect}/>
         ))}
       </Modalidade>
     </>

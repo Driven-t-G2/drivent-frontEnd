@@ -3,9 +3,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import useHotelRooms from '../../../hooks/api/useHotelRooms';
 
-const HotelButton = ({ hotel }) => {
+const HotelButton = ({ hotel, set, id, setHotel, hotelSelect }) => {
   const { hotelsRooms } = useHotelRooms(hotel.id);
   const [capacity, setCapacity] = useState(0);
+  const [clicked, setClicked] = useState(false);
   console.log(hotelsRooms);
   useEffect(() => {
     const CalcCapacity = (array) => {
@@ -19,11 +20,17 @@ const HotelButton = ({ hotel }) => {
     if (hotelsRooms) {
       CalcCapacity(hotelsRooms?.Rooms);
     }
-  }, []);
-
+  }, [hotelsRooms]);
+  const ClickHotel = () => {
+    if (hotel.id === id) {
+      set(0);
+    } else {
+      set(hotel.id);
+    }
+  };
   return (
     <>
-      <Hotelbutton>
+      <Hotelbutton onClick={ClickHotel} isSelected={hotel.id === id}>
         <HotelImage>
           <img src={hotel.image}></img>
           <h2>{hotel.name}</h2>
