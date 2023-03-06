@@ -1,6 +1,26 @@
+import { useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
+import useHotelRooms from '../../../hooks/api/useHotelRooms';
 
 const HotelButton = ({ hotel }) => {
+  const { hotelsRooms } = useHotelRooms(hotel.id);
+  const [capacity, setCapacity] = useState(0);
+  console.log(hotelsRooms);
+  useEffect(() => {
+    const CalcCapacity = (array) => {
+      let hotelCapacity = 0;
+      for (let i = 0; i < array.length; i++) {
+        const element = array[i].capacity - array[i].Booking.length;
+        hotelCapacity = hotelCapacity + element;
+      }
+      setCapacity(hotelCapacity);
+    };
+    if (hotelsRooms) {
+      CalcCapacity(hotelsRooms?.Rooms);
+    }
+  }, []);
+
   return (
     <>
       <Hotelbutton>
@@ -15,7 +35,7 @@ const HotelButton = ({ hotel }) => {
         </HotelData>
         <HotelData>
           <h5>Vagas disponíveis:</h5>
-          <p>103</p>
+          <p>{capacity}</p>
         </HotelData>
       </Hotelbutton>
     </>
@@ -56,7 +76,7 @@ const Hotelbutton = styled.button`
     font-weight: 700;
     font-size: 12px;
   }
-  h2{
+  h2 {
     color: #343434;
     font-weight: 400;
     font-size: 20px;
