@@ -2,10 +2,17 @@ import useEnrollment from '../../../hooks/api/useEnrollment';
 import useTicket from '../../../hooks/api/useTicket';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
+import useHotel from '../../../hooks/api/useHotel';
+import HotelButton from './HotelButton';
+import { useState } from 'react';
 
 export default function Hotel() {
+  const [hotelId, setHotelId] = useState(0);
+  const [hotelSelect, setSelectHotel] = useState(false);
   const { enrollment } = useEnrollment();
   const { ticket } = useTicket();
+  const { hotels } = useHotel();
+  console.log(hotels);
   let ticketType;
   if (ticket) {
     ticketType = ticket.TicketType;
@@ -47,7 +54,19 @@ export default function Hotel() {
       </>
     );
   }
-  return 'Hotel: Em breve!';
+  return (
+    <>
+      <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+      <ContainerTicket>
+        <h5>Primeiro, escolha seu hotel</h5>
+      </ContainerTicket>
+      <Modalidade>
+        {hotels?.map((item) => (
+          <HotelButton hotel={item} set={setHotelId} id={hotelId} setHotel={setSelectHotel} hotelSelect={hotelSelect}/>
+        ))}
+      </Modalidade>
+    </>
+  );
 }
 
 const StyledTypography = styled(Typography)`
@@ -66,4 +85,18 @@ const ContainerWarning = styled.div`
     font-size: 20px;
     color: #8e8e8e;
   }
+`;
+const ContainerTicket = styled.div`
+  width: 100%;
+  margin-top: 40px;
+  h5 {
+    color: #8e8e8e;
+  }
+`;
+const Modalidade = styled.div`
+  margin-top: 20px;
+  display: flex;
+  color: #8e8e8e;
+
+  padding-bottom: 15px;
 `;

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import PaymentForm from './PaymentForm';
 import { toast } from 'react-toastify';
 import { FaCheckCircle } from 'react-icons/fa';
+import useTicket from '../../../hooks/api/useTicket';
 
 export default function Payment() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function Payment() {
   const [ticketTypeId, setTicketTypeId] = useState(0);
   const [ticketId, setTicketId] = useState(0);
   const [paid, setPaid] = useState(false);
-
+  const { ticket } = useTicket();
   useEffect(() => {
     if (selectedModality === 'Online') {
       setTotalPrice(ticketTypes?.isRemote?.price);
@@ -88,6 +89,7 @@ export default function Payment() {
 
     setReserved(true);
   };
+  console.log(ticket);
   if (!enrollment) {
     return (
       <>
@@ -106,7 +108,7 @@ export default function Payment() {
           <h5>Ingresso escolhido</h5>
           <TicketBox>
             <p>
-              {selectedModality} + {haveHotel ? <>Com Hotel</> : <>Sem Hotel</>}
+              {ticket?.TicketType?.isRemote ? 'Online' : 'Presencial'} + {ticket?.TicketType?.includesHotel ? 'Com Hotel' : 'Sem Hotel'}
             </p>
             <span>R$ {totalPrice}</span>
           </TicketBox>
