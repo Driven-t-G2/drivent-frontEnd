@@ -62,7 +62,7 @@ export default function Hotel() {
       </ContainerTicket>
       <Modalidade>
         {hotels?.map((item) => (
-          <HotelButton hotel={item} set={setHotelId} id={hotelId} setHotel={setSelectHotel} hotelSelect={hotelSelect}/>
+          <HotelButton key={item.id} hotel={item} set={setHotelId} id={hotelId} setHotel={setSelectHotel} hotelSelect={hotelSelect}/>
         ))}
       </Modalidade>
     </>

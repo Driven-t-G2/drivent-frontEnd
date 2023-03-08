@@ -89,7 +89,7 @@ export default function Payment() {
 
     setReserved(true);
   };
-  console.log(ticket);
+
   if (!enrollment) {
     return (
       <>
