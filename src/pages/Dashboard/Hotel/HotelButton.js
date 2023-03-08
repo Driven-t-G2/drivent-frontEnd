@@ -6,8 +6,7 @@ import useHotelRooms from '../../../hooks/api/useHotelRooms';
 const HotelButton = ({ hotel, set, id, setHotel, hotelSelect }) => {
   const { hotelsRooms } = useHotelRooms(hotel.id);
   const [capacity, setCapacity] = useState(0);
-  const [clicked, setClicked] = useState(false);
-  console.log(hotelsRooms);
+
   useEffect(() => {
     const CalcCapacity = (array) => {
       let hotelCapacity = 0;
@@ -58,7 +57,6 @@ const Hotelbutton = styled.button`
   margin-right: 1rem;
   border: ${({ isSelected }) => (isSelected ? 'none' : '1px solid #cecece')};
   border-radius: 20px;
-  /* background-color: ${(prop) => (prop.clicked ? 'transparent' : '#FFEED2')}; */
   cursor: pointer;
   font-size: 16px;
   display: flex;
