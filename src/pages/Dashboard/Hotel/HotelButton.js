@@ -3,11 +3,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import useHotelRooms from '../../../hooks/api/useHotelRooms';
 
-const HotelButton = ({ hotel, set, id, setHotel, hotelSelect }) => {
+const HotelButton = ({ hotel, set, id, setHotel, setSelectedRoomId }) => {
   const { hotelsRooms } = useHotelRooms(hotel.id);
   const [capacity, setCapacity] = useState(0);
-  const [clicked, setClicked] = useState(false);
-  console.log(hotelsRooms);
+
   useEffect(() => {
     const CalcCapacity = (array) => {
       let hotelCapacity = 0;
@@ -21,13 +20,19 @@ const HotelButton = ({ hotel, set, id, setHotel, hotelSelect }) => {
       CalcCapacity(hotelsRooms?.Rooms);
     }
   }, [hotelsRooms]);
+
   const ClickHotel = () => {
     if (hotel.id === id) {
       set(0);
+      setSelectedRoomId(0);
+      setHotel(false);
     } else {
       set(hotel.id);
+      setSelectedRoomId(0);
+      setHotel(true);
     }
   };
+
   return (
     <>
       <Hotelbutton onClick={ClickHotel} isSelected={hotel.id === id}>
@@ -58,7 +63,6 @@ const Hotelbutton = styled.button`
   margin-right: 1rem;
   border: ${({ isSelected }) => (isSelected ? 'none' : '1px solid #cecece')};
   border-radius: 20px;
-  /* background-color: ${(prop) => (prop.clicked ? 'transparent' : '#FFEED2')}; */
   cursor: pointer;
   font-size: 16px;
   display: flex;

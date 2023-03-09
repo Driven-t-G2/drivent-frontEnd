@@ -4,19 +4,51 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import useHotel from '../../../hooks/api/useHotel';
 import HotelButton from './HotelButton';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import RoomButton from './RoomButton';
+import useToken from '../../../hooks/useToken';
+import instance from '../../../services/api';
+import { Reserve } from '../Payment';
+import { toast } from 'react-toastify';
 
 export default function Hotel() {
+  const token = useToken();
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+
   const [hotelId, setHotelId] = useState(0);
   const [hotelSelect, setSelectHotel] = useState(false);
+  const [hotelsWithRooms, setHotelsWithRooms] = useState([]);
+  const [selectedRoomId, setSelectedRoomId] = useState(0);
+
   const { enrollment } = useEnrollment();
   const { ticket } = useTicket();
   const { hotels } = useHotel();
-  console.log(hotels);
+
+  useEffect(async() => {
+    if (hotelSelect) {
+      try {
+        const res = await instance.get(`/hotels/${hotelId}`, config);
+        setHotelsWithRooms(res.data.Rooms);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [hotelId]);
+
+  async function bookRoom() {
+    try {
+      const res = await instance.post('/booking', { roomId: selectedRoomId }, config);
+      toast('Quarto reservado com sucesso!');
+    } catch (err) {
+      console.log(err.data);
+    }
+  }
+
   let ticketType;
   if (ticket) {
     ticketType = ticket.TicketType;
   }
+
   if (!enrollment) {
     return (
       <>
@@ -62,9 +94,42 @@ export default function Hotel() {
       </ContainerTicket>
       <Modalidade>
         {hotels?.map((item) => (
-          <HotelButton hotel={item} set={setHotelId} id={hotelId} setHotel={setSelectHotel} hotelSelect={hotelSelect}/>
+          <HotelButton
+            key={item.id}
+            hotel={item}
+            set={setHotelId}
+            id={hotelId}
+            setHotel={setSelectHotel}
+            hotelSelect={hotelSelect}
+            setSelectedRoomId={setSelectedRoomId}
+          />
         ))}
       </Modalidade>
+
+      {hotelSelect ? (
+        <>
+          <ContainerTicket>
+            <h5>Ótimo pedido! Agora escolha seu quarto</h5>
+          </ContainerTicket>
+          <Rooms>
+            {hotelsWithRooms.map((room) => (
+              <RoomButton
+                key={room.id}
+                name={room.name}
+                capacity={room.capacity}
+                booking={room.Booking}
+                id={room.id}
+                setSelectedRoomId={setSelectedRoomId}
+                selectedRoomId={selectedRoomId}
+              />
+            ))}
+          </Rooms>
+        </>
+      ) : (
+        ''
+      )}
+
+      {selectedRoomId !== 0 ? <Reserve onClick={bookRoom}>RESERVAR QUARTO</Reserve> : ''}
     </>
   );
 }
@@ -97,6 +162,13 @@ const Modalidade = styled.div`
   margin-top: 20px;
   display: flex;
   color: #8e8e8e;
+  overflow-x: auto;
 
   padding-bottom: 15px;
+`;
+
+const Rooms = styled.aside`
+  margin-top: 33px;
+  display: flex;
+  flex-wrap: wrap;
 `;
