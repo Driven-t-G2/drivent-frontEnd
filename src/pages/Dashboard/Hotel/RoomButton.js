@@ -1,9 +1,7 @@
 import { FaRegUser, FaUser } from 'react-icons/fa';
 import styled from 'styled-components';
 
-export default function RoomButton({ name, capacity, booking }) {
-  console.log(booking);
-
+export default function RoomButton({ name, capacity, booking, id, setSelectedRoomId, selectedRoomId }) {
   function renderVacancies() {
     const vacancies = [];
 
@@ -17,8 +15,13 @@ export default function RoomButton({ name, capacity, booking }) {
     return vacancies;
   }
 
+  function selectRoom() {
+    if (selectedRoomId === id) setSelectedRoomId(0);
+    else setSelectedRoomId(id);
+  }
+
   return (
-    <Room>
+    <Room onClick={selectRoom} isSelected={selectedRoomId === id} disabled={booking.length === capacity}>
       <p>{name}</p>
       <div>{renderVacancies()}</div>
     </Room>
@@ -26,7 +29,7 @@ export default function RoomButton({ name, capacity, booking }) {
 }
 
 const Room = styled.button`
-  background-color: #fff;
+  background-color: ${({ disabled, isSelected }) => (disabled ? '#E9E9E9' : isSelected ? '#FFEED2' : '#fff')};
   min-width: 190px;
   height: 45px;
   border: 1px solid #cecece;
@@ -34,13 +37,14 @@ const Room = styled.button`
   margin-right: 10px;
   margin-bottom: 10px;
   padding: 0 10px;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   cursor: pointer;
 
-  div{
+  div {
     display: flex;
     flex-direction: row-reverse;
   }

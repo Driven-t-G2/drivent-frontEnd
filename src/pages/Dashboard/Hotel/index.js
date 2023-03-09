@@ -16,6 +16,7 @@ export default function Hotel() {
   const [hotelId, setHotelId] = useState(0);
   const [hotelSelect, setSelectHotel] = useState(false);
   const [hotelsWithRooms, setHotelsWithRooms] = useState([]);
+  const [selectedRoomId, setSelectedRoomId] = useState(0);
 
   const { enrollment } = useEnrollment();
   const { ticket } = useTicket();
@@ -102,7 +103,15 @@ export default function Hotel() {
           </ContainerTicket>
           <Rooms>
             {hotelsWithRooms.map((room) => (
-              <RoomButton key={room.id} name={room.name} capacity={room.capacity} booking={room.Booking} />
+              <RoomButton
+                key={room.id}
+                name={room.name}
+                capacity={room.capacity}
+                booking={room.Booking}
+                id={room.id}
+                setSelectedRoomId={setSelectedRoomId}
+                selectedRoomId={selectedRoomId}
+              />
             ))}
           </Rooms>
         </>
