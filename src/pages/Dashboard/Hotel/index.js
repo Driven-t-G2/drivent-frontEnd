@@ -95,14 +95,20 @@ export default function Hotel() {
         ))}
       </Modalidade>
 
-      <ContainerTicket>
-        <h5>Ótimo pedido! Agora escolha seu quarto</h5>
-      </ContainerTicket>
-      <Rooms>
-        <RoomButton />
-      </Rooms>
-
-      {/* {hotelSelect ?  : ""} */}
+      {hotelSelect ? (
+        <>
+          <ContainerTicket>
+            <h5>Ótimo pedido! Agora escolha seu quarto</h5>
+          </ContainerTicket>
+          <Rooms>
+            {hotelsWithRooms.map((room) => (
+              <RoomButton key={room.id} name={room.name} capacity={room.capacity} booking={room.Booking} />
+            ))}
+          </Rooms>
+        </>
+      ) : (
+        ''
+      )}
     </>
   );
 }
@@ -135,11 +141,13 @@ const Modalidade = styled.div`
   margin-top: 20px;
   display: flex;
   color: #8e8e8e;
+  overflow-x: auto;
 
   padding-bottom: 15px;
 `;
 
 const Rooms = styled.aside`
-  background-color: blueviolet;
   margin-top: 33px;
+  display: flex;
+  flex-wrap: wrap;
 `;
