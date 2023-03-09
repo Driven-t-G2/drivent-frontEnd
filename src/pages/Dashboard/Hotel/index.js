@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import RoomButton from './RoomButton';
 import useToken from '../../../hooks/useToken';
 import instance from '../../../services/api';
+import { Reserve } from '../Payment';
+import { toast } from 'react-toastify';
 
 export default function Hotel() {
   const token = useToken();
@@ -32,6 +34,15 @@ export default function Hotel() {
       }
     }
   }, [hotelId]);
+
+  async function bookRoom() {
+    try {
+      const res = await instance.post('/booking', { roomId: selectedRoomId }, config);
+      toast('Quarto reservado com sucesso!');
+    } catch (err) {
+      console.log(err.data);
+    }
+  }
 
   let ticketType;
   if (ticket) {
@@ -118,7 +129,7 @@ export default function Hotel() {
         ''
       )}
 
-
+      {selectedRoomId !== 0 ? <Reserve onClick={bookRoom}>RESERVAR QUARTO</Reserve> : ''}
     </>
   );
 }
