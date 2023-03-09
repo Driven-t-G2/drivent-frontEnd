@@ -12,6 +12,10 @@ export default function RoomButton({ name, capacity, booking, id, setSelectedRoo
         vacancies.push(<FaUser key={i} />);
       }
     }
+
+    if (selectedRoomId !== 0 && selectedRoomId === id) {
+      vacancies[booking.length] = <FaUser key={'s'} color={'#FF4791'} />;
+    }
     return vacancies;
   }
 

@@ -22,8 +22,6 @@ export default function Hotel() {
   const { ticket } = useTicket();
   const { hotels } = useHotel();
 
-  console.log(hotelsWithRooms);
-
   useEffect(async() => {
     if (hotelSelect) {
       try {
@@ -92,6 +90,7 @@ export default function Hotel() {
             id={hotelId}
             setHotel={setSelectHotel}
             hotelSelect={hotelSelect}
+            setSelectedRoomId={setSelectedRoomId}
           />
         ))}
       </Modalidade>
@@ -118,6 +117,8 @@ export default function Hotel() {
       ) : (
         ''
       )}
+
+
     </>
   );
 }

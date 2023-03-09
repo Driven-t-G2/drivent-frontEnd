@@ -3,7 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import useHotelRooms from '../../../hooks/api/useHotelRooms';
 
-const HotelButton = ({ hotel, set, id, setHotel, hotelSelect }) => {
+const HotelButton = ({ hotel, set, id, setHotel, setSelectedRoomId }) => {
   const { hotelsRooms } = useHotelRooms(hotel.id);
   const [capacity, setCapacity] = useState(0);
 
@@ -24,9 +24,11 @@ const HotelButton = ({ hotel, set, id, setHotel, hotelSelect }) => {
   const ClickHotel = () => {
     if (hotel.id === id) {
       set(0);
+      setSelectedRoomId(0);
       setHotel(false);
     } else {
       set(hotel.id);
+      setSelectedRoomId(0);
       setHotel(true);
     }
   };
