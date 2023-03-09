@@ -4,19 +4,41 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import useHotel from '../../../hooks/api/useHotel';
 import HotelButton from './HotelButton';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import RoomButton from './RoomButton';
+import useToken from '../../../hooks/useToken';
+import instance from '../../../services/api';
 
 export default function Hotel() {
+  const token = useToken();
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+
   const [hotelId, setHotelId] = useState(0);
   const [hotelSelect, setSelectHotel] = useState(false);
+  const [hotelsWithRooms, setHotelsWithRooms] = useState([]);
+
   const { enrollment } = useEnrollment();
   const { ticket } = useTicket();
   const { hotels } = useHotel();
-  console.log(hotels);
+
+  console.log(hotelsWithRooms);
+
+  useEffect(async() => {
+    if (hotelSelect) {
+      try {
+        const res = await instance.get(`/hotels/${hotelId}`, config);
+        setHotelsWithRooms(res.data.Rooms);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [hotelId]);
+
   let ticketType;
   if (ticket) {
     ticketType = ticket.TicketType;
   }
+
   if (!enrollment) {
     return (
       <>
@@ -62,9 +84,25 @@ export default function Hotel() {
       </ContainerTicket>
       <Modalidade>
         {hotels?.map((item) => (
-          <HotelButton key={item.id} hotel={item} set={setHotelId} id={hotelId} setHotel={setSelectHotel} hotelSelect={hotelSelect}/>
+          <HotelButton
+            key={item.id}
+            hotel={item}
+            set={setHotelId}
+            id={hotelId}
+            setHotel={setSelectHotel}
+            hotelSelect={hotelSelect}
+          />
         ))}
       </Modalidade>
+
+      <ContainerTicket>
+        <h5>Ótimo pedido! Agora escolha seu quarto</h5>
+      </ContainerTicket>
+      <Rooms>
+        <RoomButton />
+      </Rooms>
+
+      {/* {hotelSelect ?  : ""} */}
     </>
   );
 }
@@ -99,4 +137,9 @@ const Modalidade = styled.div`
   color: #8e8e8e;
 
   padding-bottom: 15px;
+`;
+
+const Rooms = styled.aside`
+  background-color: blueviolet;
+  margin-top: 33px;
 `;

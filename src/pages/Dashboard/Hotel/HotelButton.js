@@ -20,13 +20,17 @@ const HotelButton = ({ hotel, set, id, setHotel, hotelSelect }) => {
       CalcCapacity(hotelsRooms?.Rooms);
     }
   }, [hotelsRooms]);
+
   const ClickHotel = () => {
     if (hotel.id === id) {
       set(0);
+      setHotel(false);
     } else {
       set(hotel.id);
+      setHotel(true);
     }
   };
+
   return (
     <>
       <Hotelbutton onClick={ClickHotel} isSelected={hotel.id === id}>
