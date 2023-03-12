@@ -10,15 +10,18 @@ import useToken from '../../../hooks/useToken';
 import instance from '../../../services/api';
 import { Reserve } from '../Payment';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function Hotel() {
   const token = useToken();
   const config = { headers: { Authorization: `Bearer ${token}` } };
+  const navigate = useNavigate();
 
   const [hotelId, setHotelId] = useState(0);
   const [hotelSelect, setSelectHotel] = useState(false);
   const [hotelsWithRooms, setHotelsWithRooms] = useState([]);
   const [selectedRoomId, setSelectedRoomId] = useState(0);
+  const [booking, setBooking] = useState({});
 
   const { enrollment } = useEnrollment();
   const { ticket } = useTicket();
@@ -37,12 +40,24 @@ export default function Hotel() {
 
   async function bookRoom() {
     try {
-      const res = await instance.post('/booking', { roomId: selectedRoomId }, config);
+      await instance.post('/booking', { roomId: selectedRoomId }, config);
       toast('Quarto reservado com sucesso!');
+      const res = await instance.get('/booking', config);
+      const booking = res.data;   
+      navigate('/dashboard/booking', { state: { booking } });
     } catch (err) {
       console.log(err.data);
     }
   }
+
+  useEffect(async() => {
+    try {
+      const res = await instance.get('/booking', config);
+      setBooking(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   let ticketType;
   if (ticket) {
@@ -85,6 +100,8 @@ export default function Hotel() {
         </ContainerWarning>
       </>
     );
+  } else if (booking.Room) {
+    navigate('/dashboard/booking', { state: { booking } });
   }
   return (
     <>
@@ -166,7 +183,6 @@ const Modalidade = styled.div`
 
   padding-bottom: 15px;
 `;
-
 const Rooms = styled.aside`
   margin-top: 33px;
   display: flex;
