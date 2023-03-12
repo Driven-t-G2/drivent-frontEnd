@@ -43,7 +43,7 @@ const HotelButton = ({ hotel, set, id, setHotel, setSelectedRoomId }) => {
 
         <HotelData>
           <h5>Tipos de acomodação:</h5>
-          <p>Single e Double</p>
+          <p>Single, Double e Triple</p>
         </HotelData>
         <HotelData>
           <h5>Vagas disponíveis:</h5>

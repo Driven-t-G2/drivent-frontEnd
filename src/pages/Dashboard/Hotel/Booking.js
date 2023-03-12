@@ -2,16 +2,19 @@ import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components';
 import { Reserve } from '../Payment';
 import useToken from '../../../hooks/useToken';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import instance from '../../../services/api';
+import ChangeContext from '../../../contexts/ChangeContext';
 
 export default function Booking() {
+  const navigate = useNavigate();
   const token = useToken();
   const config = { headers: { Authorization: `Bearer ${token}` } };
   const { booking } = useLocation().state;
   const [ infos, setInfos] = useState([]);
   const [ Room ] = useState(booking.Room);
+  const { change, setChange } = useContext(ChangeContext);
   const capacity = { 1: 'Single', 2: 'Double', 3: 'Triple' };
     
   useEffect(async() => {
@@ -21,7 +24,7 @@ export default function Booking() {
     } catch (err) {
       console.log(err);
     }
-  }, [Room]);
+  }, [Room, change, booking]);
   
   const { name, image, Rooms = [] } = infos;
 
@@ -35,6 +38,11 @@ export default function Booking() {
 
     return '';
   };
+
+  function changeRoom() {
+    setChange(false);
+    navigate('/dashboard/hotel');
+  }
 
   function capacityRoom() {
     return Room?.capacity && capacity[Room.capacity] || '-';
@@ -60,7 +68,7 @@ export default function Booking() {
           <p>{reservationsRooms()}</p>
         </HotelData>
       </Hotelbutton>
-      <Reserve>TROCAR DE QUARTO</Reserve>
+      <Reserve onClick={changeRoom}>TROCAR DE QUARTO</Reserve>
     </>
   );
 };
