@@ -4,13 +4,14 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import useHotel from '../../../hooks/api/useHotel';
 import HotelButton from './HotelButton';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import RoomButton from './RoomButton';
 import useToken from '../../../hooks/useToken';
 import instance from '../../../services/api';
 import { Reserve } from '../Payment';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import ChangeContext from '../../../contexts/ChangeContext';
 
 export default function Hotel() {
   const token = useToken();
@@ -22,6 +23,7 @@ export default function Hotel() {
   const [hotelsWithRooms, setHotelsWithRooms] = useState([]);
   const [selectedRoomId, setSelectedRoomId] = useState(0);
   const [booking, setBooking] = useState({});
+  const { change, setChange } = useContext(ChangeContext);
 
   const { enrollment } = useEnrollment();
   const { ticket } = useTicket();
@@ -39,11 +41,17 @@ export default function Hotel() {
   }, [hotelId]);
 
   async function bookRoom() {
+    const id = booking.id;
     try {
-      await instance.post('/booking', { roomId: selectedRoomId }, config);
+      if (id) {
+        await instance.put(`/booking/${id}`, { roomId: selectedRoomId }, config);
+      } else {
+        await instance.post('/booking', { roomId: selectedRoomId }, config);
+      }
       toast('Quarto reservado com sucesso!');
       const res = await instance.get('/booking', config);
-      const booking = res.data;   
+      const booking = res.data;
+      setChange(true);
       navigate('/dashboard/booking', { state: { booking } });
     } catch (err) {
       console.log(err.data);
@@ -100,7 +108,7 @@ export default function Hotel() {
         </ContainerWarning>
       </>
     );
-  } else if (booking.Room) {
+  } else if (booking.Room && change) {
     navigate('/dashboard/booking', { state: { booking } });
   }
   return (
