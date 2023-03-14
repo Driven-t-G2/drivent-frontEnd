@@ -1,54 +1,28 @@
-import { useState, useEffect, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
-
 import { Reserve } from '../Payment';
-import useToken from '../../../hooks/useToken';
-import ChangeContext from '../../../contexts/ChangeContext';
-import instance from '../../../services/api';
 
-export default function Booking() {
-  const navigate = useNavigate();
-  const {
-    state: { booking },
-  } = useLocation();
-  const [infos, setInfos] = useState({});
-  const [room, setRoom] = useState(booking.Room);
-  const { change, setChange } = useContext(ChangeContext);
-  const token = useToken();
-  const config = { headers: { Authorization: `Bearer ${token}` } };
+export default function Booking({ setChange, selectedHotel, hotelsWithRooms, room }) {
   const capacity = { 1: 'Single', 2: 'Double', 3: 'Triple' };
+  const [reservations, setReservations] = useState(0);
 
   useEffect(() => {
-    const getHotelInfo = async() => {
-      try {
-        const res = await instance.get(`/hotels/${room.hotelId}`, config);
-        setInfos(res.data);
-        setRoom(booking.Room);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getHotelInfo();
-  }, [room, change, booking, config]);
+    reservationsRooms();
+  }, []);
 
-  const { name, image, Rooms = [] } = infos;
+  const { Rooms } = hotelsWithRooms;
+  const { image, name } = selectedHotel;
 
   function reservationsRooms() {
-    const roomBooking = Rooms.find(({ name: roomName }) => roomName === room.name);
+    const roomBooking = Rooms?.find(({ name: roomName }) => roomName === room.name);
     if (roomBooking) {
-      const reservations = roomBooking.Booking.length;
-      if (reservations === 1) return 'Somente você';
-      return `Você e mais ${reservations - 1}`;
+      setReservations(roomBooking?.Booking.length);
     }
-
-    return '';
   }
 
   function changeRoom() {
-    setChange(false);
-    navigate('/dashboard/hotel');
+    setChange(true);
   }
 
   function capacityRoom() {
@@ -63,7 +37,7 @@ export default function Booking() {
       </ContainerTicket>
       <HotelButton>
         <HotelImage>
-          <img src={image} alt={name} />
+          <img src={image} alt={'hotel'} />
           <h2>{name}</h2>
         </HotelImage>
         <HotelData>
@@ -73,8 +47,8 @@ export default function Booking() {
           </p>
         </HotelData>
         <HotelData>
-          <h5>Pessoas no seu quarto:</h5>
-          <p>{reservationsRooms()}</p>
+          <h5>Pessoas no seu quarto:</h5>   
+          <p>{(reservations === 1) ? 'Somente você' : `Você e mais ${reservations - 1}`}</p>
         </HotelData>
       </HotelButton>
       <Reserve onClick={changeRoom}>TROCAR DE QUARTO</Reserve>
