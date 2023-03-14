@@ -18,8 +18,6 @@ export default function Hotel() {
 
   const [hotelId, setHotelId] = useState(0);
   const [hotelSelect, setSelectHotel] = useState(false);
-  const [selectedHotel, setSelectedHotel] = useState([]);
-  const [hotelsWithRooms, setHotelsWithRooms] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [room, setRoom] = useState([]);
   const [selectedRoomId, setSelectedRoomId] = useState(0);
@@ -34,10 +32,9 @@ export default function Hotel() {
     try {
       const res = await instance.get('/booking', config);
       setBooking(res.data);
-      setRoom(res.data.Room);
-      const selectedHotel = hotels.find((h) => h.id === res.data.Room.hotelId);
-      console.log(selectedHotel);
-      setSelectedHotel(selectedHotel);
+      const res2 = await instance.get(`/hotels/${res.data.Room.hotelId}`, config);
+      setRoom(res2.data.Rooms.find((i) => i.id === res.data.Room.id));
+      console.log('ola');
     } catch (error) {
       console.log(error);
     }
@@ -47,17 +44,19 @@ export default function Hotel() {
     selectRoom();
   }, []);
 
-  useEffect(async() => {
-    if (hotelSelect) {
-      try {
-        const res = await instance.get(`/hotels/${hotelId}`, config);
-        setHotelsWithRooms(res.data);
-        setRooms(res.data.Rooms);
-      } catch (err) {
-        console.log(err);
+  useEffect(() => {
+    async function fetchHotelsWithRooms() {
+      if (hotelSelect) {
+        try {
+          const res = await instance.get(`/hotels/${hotelId}`, config);
+          setRooms(res.data.Rooms);
+        } catch (err) {
+          console.log(err);
+        }
       }
     }
-  }, [hotelId]);
+    fetchHotelsWithRooms();
+  }, [hotelId, hotelSelect]);
 
   async function bookRoom() {
     const id = booking.id;
@@ -79,8 +78,8 @@ export default function Hotel() {
   if (ticket) {
     ticketType = ticket.TicketType;
   }
-  if (!change && booking) {
-    return <Booking setChange={setChange} change={change} hotelsWithRooms={hotelsWithRooms} room={room} selectedHotel={selectedHotel} selectRoom={selectRoom}/>;
+  if (!change && booking.Room) {
+    return <Booking setChange={setChange} change={change} config={config} room={room} booking={booking} />;
   }
   return (
     <>

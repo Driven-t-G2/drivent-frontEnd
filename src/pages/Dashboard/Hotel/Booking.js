@@ -2,24 +2,32 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import { Reserve } from '../Payment';
+import instance from '../../../services/api';
 
-export default function Booking({ setChange, selectedHotel, hotelsWithRooms, room }) {
+export default function Booking({ setChange, booking, config }) {
   const capacity = { 1: 'Single', 2: 'Double', 3: 'Triple' };
   const [reservations, setReservations] = useState(0);
+  const [selectedHotel, setSelectedHotel] = useState([]);
+  const [room, setRoom] = useState([]);
 
-  useEffect(() => {
-    reservationsRooms();
-  }, []);
-
-  const { Rooms } = hotelsWithRooms;
-  const { image, name } = selectedHotel;
-
-  function reservationsRooms() {
-    const roomBooking = Rooms?.find(({ name: roomName }) => roomName === room.name);
-    if (roomBooking) {
-      setReservations(roomBooking?.Booking.length);
+  async function fetchHotel() {
+    try {
+      const res = await instance.get(`/hotels/${booking.Room.hotelId}`, config);
+      setSelectedHotel(res.data);
+      const selectedRoom = res.data.Rooms.find((i) => i.id === booking.Room.id);
+      setRoom(selectedRoom);
+      setReservations(selectedRoom.Booking.length);
+      console.log(selectedRoom.Booking);
+    } catch (error) {
+      console.log(error);
     }
   }
+
+  useEffect(() => {
+    fetchHotel();
+  }, [booking]);
+
+  const { image, name } = selectedHotel;
 
   function changeRoom() {
     setChange(true);
@@ -47,8 +55,8 @@ export default function Booking({ setChange, selectedHotel, hotelsWithRooms, roo
           </p>
         </HotelData>
         <HotelData>
-          <h5>Pessoas no seu quarto:</h5>   
-          <p>{(reservations === 1) ? 'Somente você' : `Você e mais ${reservations - 1}`}</p>
+          <h5>Pessoas no seu quarto:</h5>
+          <p>{reservations === 1 ? 'Somente você' : `Você e mais ${reservations - 1}`}</p>
         </HotelData>
       </HotelButton>
       <Reserve onClick={changeRoom}>TROCAR DE QUARTO</Reserve>
