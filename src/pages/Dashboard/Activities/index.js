@@ -7,6 +7,11 @@ import useActivityDate from '../../../hooks/api/useActivityDate';
 import useTicket from '../../../hooks/api/useTicket';
 
 export default function Activities() {
+  dayjs.extend(updateLocale);
+  dayjs.updateLocale('en', {
+    weekdays: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+  });
+
   const { activityDate } = useActivityDate();
   const { ticket } = useTicket();
 
@@ -36,7 +41,7 @@ export default function Activities() {
         <ListDate>
           {activityDate?.map((date) => (
             <Date onClick={() => selectDate(date.id)} key={date.id} isSelected={selectedDateId === date.id}>
-              {date.data}
+              {dayjs(date.data).format('dddd') + ', ' + dayjs(date.data).format('DD/MM')}
             </Date>
           ))}
         </ListDate>
