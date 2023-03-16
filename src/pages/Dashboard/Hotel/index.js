@@ -34,7 +34,6 @@ export default function Hotel() {
       setBooking(res.data);
       const res2 = await instance.get(`/hotels/${res.data.Room.hotelId}`, config);
       setRoom(res2.data.Rooms.find((i) => i.id === res.data.Room.id));
-      console.log('ola');
     } catch (error) {
       console.log(error);
     }
