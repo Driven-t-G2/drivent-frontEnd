@@ -7,16 +7,8 @@ import useActivityDate from '../../../hooks/api/useActivityDate';
 import useTicket from '../../../hooks/api/useTicket';
 
 export default function Activities() {
-  // dayjs.extend(updateLocale);
-  // dayjs.updateLocale('pt-br', {
-  //   weekdays: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-  // });
-
   const { activityDate } = useActivityDate();
   const { ticket } = useTicket();
-  //const teste = dayjs('2023-03-16').date(1, 'day');
-
-  //console.log(teste);
 
   const [selectedDateId, setSelectedDateId] = useState(0);
 
