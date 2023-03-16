@@ -1,13 +1,32 @@
 import { Typography } from '@material-ui/core';
+import dayjs from 'dayjs';
+import updateLocale from 'dayjs/plugin/updateLocale';
+import { useState } from 'react';
 import styled from 'styled-components';
 import useActivityDate from '../../../hooks/api/useActivityDate';
 import useTicket from '../../../hooks/api/useTicket';
 
 export default function Activities() {
+  // dayjs.extend(updateLocale);
+  // dayjs.updateLocale('pt-br', {
+  //   weekdays: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+  // });
+
   const { activityDate } = useActivityDate();
   const { ticket } = useTicket();
+  //const teste = dayjs('2023-03-16').date(1, 'day');
 
-  console.log(activityDate);
+  //console.log(teste);
+
+  const [selectedDateId, setSelectedDateId] = useState(0);
+
+  function selectDate(id) {
+    if (selectedDateId === id) {
+      setSelectedDateId(0);
+    } else {
+      setSelectedDateId(id);
+    }
+  }
 
   return (
     <>
@@ -22,7 +41,13 @@ export default function Activities() {
           <h5>Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</h5>
         </ContainerWarning>
       ) : (
-        'oi'
+        <ListDate>
+          {activityDate?.map((date) => (
+            <Date onClick={() => selectDate(date.id)} key={date.id} isSelected={selectedDateId === date.id}>
+              {date.data}
+            </Date>
+          ))}
+        </ListDate>
       )}
     </>
   );
@@ -44,4 +69,23 @@ const ContainerWarning = styled.div`
     font-size: 20px;
     color: #8e8e8e;
   }
+`;
+
+const ListDate = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const Date = styled.li`
+  background: ${({ isSelected }) => (isSelected ? '#FFD37D' : '#e0e0e0')};
+  width: 131px;
+  height: 37px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `;
