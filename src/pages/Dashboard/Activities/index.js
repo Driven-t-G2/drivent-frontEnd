@@ -79,6 +79,10 @@ const Date = styled.li`
   height: 37px;
   margin-right: 20px;
   margin-bottom: 20px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #000000;
+
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
   display: flex;
