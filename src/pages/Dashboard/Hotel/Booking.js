@@ -17,7 +17,6 @@ export default function Booking({ setChange, booking, config }) {
       const selectedRoom = res.data.Rooms.find((i) => i.id === booking.Room.id);
       setRoom(selectedRoom);
       setReservations(selectedRoom.Booking.length);
-      console.log(selectedRoom.Booking);
     } catch (error) {
       console.log(error);
     }
