@@ -16,11 +16,11 @@ export default function Activities() {
   const { activityDate } = useActivityDate();
   const { ticket } = useTicket();
 
-  const [selectedDateId, setSelectedDateId] = useState(0);
+  const [selectedDateId, setSelectedDateId] = useState(null);
 
   function selectDate(id) {
     if (selectedDateId === id) {
-      setSelectedDateId(0);
+      setSelectedDateId(null);
     } else {
       setSelectedDateId(id);
     }
