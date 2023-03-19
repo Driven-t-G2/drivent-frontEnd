@@ -5,6 +5,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import useActivityDate from '../../../hooks/api/useActivityDate';
 import useTicket from '../../../hooks/api/useTicket';
+import ActivityLocal from './ActivityLocal';
 
 export default function Activities() {
   dayjs.extend(updateLocale);
@@ -15,11 +16,11 @@ export default function Activities() {
   const { activityDate } = useActivityDate();
   const { ticket } = useTicket();
 
-  const [selectedDateId, setSelectedDateId] = useState(0);
+  const [selectedDateId, setSelectedDateId] = useState(null);
 
   function selectDate(id) {
     if (selectedDateId === id) {
-      setSelectedDateId(0);
+      setSelectedDateId(null);
     } else {
       setSelectedDateId(id);
     }
@@ -38,13 +39,16 @@ export default function Activities() {
           <h5>Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</h5>
         </ContainerWarning>
       ) : (
-        <ListDate>
-          {activityDate?.map((date) => (
-            <Date onClick={() => selectDate(date.id)} key={date.id} isSelected={selectedDateId === date.id}>
-              {dayjs(date.data).format('dddd') + ', ' + dayjs(date.data).format('DD/MM')}
-            </Date>
-          ))}
-        </ListDate>
+        <>
+          <ListDate>
+            {activityDate?.map((date) => (
+              <Date onClick={() => selectDate(date.id)} key={date.id} isSelected={selectedDateId === date.id}>
+                {dayjs(date.data).format('dddd') + ', ' + dayjs(date.data).format('DD/MM')}
+              </Date>
+            ))}
+          </ListDate>
+          {selectedDateId && <ActivityLocal dataId={selectedDateId} />}
+        </>
       )}
     </>
   );
