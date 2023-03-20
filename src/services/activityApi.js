@@ -19,3 +19,16 @@ export async function getLocal(token, dataId) {
 
   return response.data;
 }
+
+export async function postChosenActivity(token, activityId) {
+  try{
+    const res = await api.post(`/activities/${activityId}`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }); 
+    return res;
+  }catch(error) {
+    throw error;
+  }
+}
