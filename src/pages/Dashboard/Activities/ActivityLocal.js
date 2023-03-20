@@ -12,15 +12,18 @@ export default function ActivityLocal({ dataId }) {
 
   const [activityLocal, setActivityLocal] = useState([]);
 
-  useEffect(async() => {
+  useEffect( getActivities, [dataId]);
+
+  async function getActivities() {
     const res = await getLocal(token, dataId);
     setActivityLocal(res);
-  }, [dataId]);
+  }
   
   async function postActivity(activityId) {
     try{
       await postChosenActivity(token, activityId);
       toast('Inscrição realizada com sucesso!');
+      getActivities();
     }catch(error) {
       if(error.response.data.message === 'Activities hours Dont match') {
         toast('Conflito de horário.');
