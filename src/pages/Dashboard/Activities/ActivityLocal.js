@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useToken from '../../../hooks/useToken';
 import { getLocal, postChosenActivity } from '../../../services/activityApi';
-import { IoEnterOutline } from 'react-icons/io5';
-import { IoCheckmarkCircleOutline } from 'react-icons/io5';
+import { IoEnterOutline, IoCloseCircleOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { toast } from 'react-toastify';
 
 export default function ActivityLocal({ dataId }) {
@@ -12,26 +11,27 @@ export default function ActivityLocal({ dataId }) {
 
   const [activityLocal, setActivityLocal] = useState([]);
 
-  useEffect( getActivities, [dataId]);
+  useEffect(getActivities, [dataId]);
 
   async function getActivities() {
     const res = await getLocal(token, dataId);
+    console.log(res);
     setActivityLocal(res);
   }
-  
+
   async function postActivity(activityId) {
-    try{
+    try {
       await postChosenActivity(token, activityId);
       toast('Inscrição realizada com sucesso!');
       getActivities();
-    }catch(error) {
-      if(error.response.data.message === 'Activities hours Dont match') {
+    } catch (error) {
+      if (error.response.data.message === 'Activities hours Dont match') {
         toast('Conflito de horário.');
-      }else{
+      } else {
         toast('Não foi possível fazer a inscrição.');
       }
     }
-  };  
+  }
 
   return (
     <ActivitiesContainer>
@@ -40,31 +40,36 @@ export default function ActivityLocal({ dataId }) {
           <h2>{i.name}</h2>
           <LocalContainer size={activityLocal.length}>
             {i.activities.map((j) => (
-              <ActivityBox key={'activity-box-' + j.id} size={j.duration} 
-                subscribed={j.subscribed} 
-              >
+              <ActivityBox key={'activity-box-' + j.id} size={j.duration} subscribed={j.subscribed}>
                 <Title>
                   <h3>{j.name}</h3>
                   <span>
                     {dayjs(j.start_time).format('HH:mm')} - {dayjs(j.end_time).format('HH:mm')}
                   </span>
                 </Title>
-                <ButtonBox onClick={() => postActivity(j.id)} >
-                  { j.subscribed?
+                <ButtonBox>
+                  {j.subscribed ? (
                     <>
                       <h6>
                         <IoCheckmarkCircleOutline />
                       </h6>
                       inscrito
-                    </>                     
-                    : 
+                    </>
+                  ) : j.capacity - j._count.Chosen_Activities === 0 ? (
+                    <>
+                      <h5>
+                        <IoCloseCircleOutline />
+                      </h5>
+                      <h4>Esgotado</h4>
+                    </>
+                  ) : (
                     <>
                       <h6>
-                        <IoEnterOutline />
+                        <IoEnterOutline onClick={() => postActivity(j.id)} />
                       </h6>
-                      {j.capacity} vagas
+                      {j.capacity - j._count.Chosen_Activities} vagas
                     </>
-                  }
+                  )}
                 </ButtonBox>
               </ActivityBox>
             ))}
@@ -104,7 +109,7 @@ const ActivityBox = styled.div`
   display: flex;
   width: 100%;
   height: ${({ size }) => size * 79}px;
-  background-color: ${ (({ subscribed } ) => (subscribed? '#D0FFDB': '#f1f1f1')) };
+  background-color: ${({ subscribed }) => (subscribed ? '#D0FFDB' : '#f1f1f1')};
   border-radius: 5px;
   margin: 5px 0;
   padding: 10px;
@@ -137,9 +142,16 @@ const ButtonBox = styled.div`
   color: #078632;
   margin: 0 5px;
   h6 {
-    border: none;
-    margin: 0;
-    padding: 0;
     font-size: 25px;
+    cursor: pointer;
+  }
+
+  h5 {
+    color: #cc6666;
+    font-size: 25px;
+  }
+
+  h4 {
+    color: #cc6666;
   }
 `;

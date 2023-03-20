@@ -32,3 +32,4 @@ export async function postChosenActivity(token, activityId) {
     throw error;
   }
 }
+
